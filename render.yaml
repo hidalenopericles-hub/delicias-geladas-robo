@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: delicias-geladas-robo
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: WHATSAPP_VERIFY_TOKEN
+        sync: false
