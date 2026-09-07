@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Delícias Geladas — Robô de Atendimento</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f4f0f7;color:#24152e}
+header{background:#5d2c7d;color:#fff;padding:18px 24px}
+header h1{margin:0;font-size:22px}
+header p{margin:5px 0 0;opacity:.9}
+main{max-width:1100px;margin:24px auto;padding:0 16px;display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.card{background:#fff;border-radius:16px;padding:20px;box-shadow:0 5px 20px #0001}
+.menu{white-space:pre-line;background:#faf7fc;border-radius:12px;padding:16px;line-height:1.55}
+img{width:100%;border-radius:12px;margin-top:12px}
+input{width:100%;padding:13px;border:1px solid #ccc;border-radius:10px;font-size:16px}
+button{margin-top:10px;padding:12px 18px;border:0;border-radius:10px;background:#5d2c7d;color:white;font-weight:bold;cursor:pointer}
+#saida{margin-top:15px;white-space:pre-line;background:#f7f3f9;padding:15px;border-radius:12px}
+.badge{display:inline-block;padding:6px 10px;border-radius:20px;background:#eee;margin:3px}
+@media(max-width:800px){main{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🍦 Delícias Geladas — Central de Atendimento</h1>
+  <p>Robô de atendimento para WhatsApp</p>
+</header>
+
+<main>
+  <section class="card">
+    <h2>🤖 Testar o robô</h2>
+    <p>Digite uma mensagem como se fosse um cliente.</p>
+    <input id="mensagem" placeholder="Ex.: quero ver o cardápio">
+    <button onclick="enviar()">Enviar</button>
+    <div id="saida">A resposta aparecerá aqui.</div>
+  </section>
+
+  <section class="card">
+    <h2>📋 Cardápio</h2>
+    <p><span class="badge">Entrega: R$ 2,00</span><span class="badge">Sábado: fechado</span></p>
+    <img src="/cardapio.jpg" alt="Cardápio Delícias Geladas">
+  </section>
+</main>
+
+<script>
+async function enviar(){
+  const mensagem=document.getElementById("mensagem").value;
+  if(!mensagem.trim()) return;
+  const r=await fetch("/api/teste",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({mensagem})
+  });
+  const d=await r.json();
+  let html=d.resposta.replaceAll("\n","<br>");
+  if(d.imagem) html += `<br><img src="${d.imagem}" alt="Cardápio">`;
+  if(d.transferirAtendente) html += "<br><br>🟡 Atendimento transferido para a fila humana.";
+  document.getElementById("saida").innerHTML=html;
+}
+document.getElementById("mensagem").addEventListener("keydown",e=>{
+  if(e.key==="Enter") enviar();
+});
+</script>
+</body>
+</html>
